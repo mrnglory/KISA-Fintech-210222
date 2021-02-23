@@ -5,6 +5,6 @@ var xml = undefined;
 request('http://www.weather.go.kr/weather/forecast/mid-term-rss3.jsp?stnld=109', function(error, response, body) {
     xml = body;
     parseString(xml, function(err, result) {
-        console.dir(result);
+        console.dir(result.rss.channel);
     });
 });
