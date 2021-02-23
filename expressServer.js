@@ -10,6 +10,10 @@ app.get('/', function (req, res) {
     res.send('Hello World');
 })
 
+app.get('/ejs', function (req, res) {
+    res.render('ejsTest');
+})
+
 app.get('/user', function (req, res) {
     connection.query('SELECT * FROM user;', function(error, results, fields) {
         console.log(results);
