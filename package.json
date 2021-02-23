@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/mrnglory/KISA-Fintech-210222/issues"
   },
-  "homepage": "https://github.com/mrnglory/KISA-Fintech-210222#readme"
+  "homepage": "https://github.com/mrnglory/KISA-Fintech-210222#readme",
+  "dependencies": {
+    "request": "^2.88.2"
+  }
 }
