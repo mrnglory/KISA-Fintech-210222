@@ -1,6 +1,11 @@
 const express = require('express');
 const app = express();
 
+// json 타입의 데이터 전송을 허용
+app.use(express.json());
+// form 타입의 데이터 전송을 허용
+app.use(express.urlencoded({ extended: false }));
+
 // 뷰 파일이 있는 디렉토리를 설정
 app.set('views', __dirname + '/views');
 // 뷰 엔진으로 ejs 사용
@@ -15,7 +20,9 @@ app.get('/ejs', function (req, res) {
 })
 
 app.post('/userData', function(req, res) {
-    console.log("사용자의 요청이 발생했습니다.");
+    console.log("사용자의 요청이 발생했습니다");
+    console.log(req.body);
+    res.send(true);
 })
 
 app.get('/user', function (req, res) {
