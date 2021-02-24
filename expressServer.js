@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const request = require('request');
 
 // json 타입의 데이터 전송을 허용
 app.use(express.json());
@@ -16,6 +17,40 @@ app.set('view engine', 'ejs');
 
 app.get('/', function (req, res) {
     res.send('Hello World');
+})
+
+app.get('/signup', function(req, res) {
+    res.render('signup');
+})
+
+app.get('/authResult', function(req, res) {
+    var authCode = req.query.code;
+    var option = {
+        method : "POST",
+        url : "https://testapi.openbanking.or.kr/oauth/2.0/token",
+        header : {
+            'Content-Type' : 'application/x-www-form-urlencoded'
+        },
+        form : {
+            code : authCode,
+            client_id : "49dfaaa3-c984-40fe-890d-88ce7020f5aa",
+            client_secret : "b6d0da1d-d9cb-47f2-b8c5-00676eab9209",
+            redirect_uri : "http://localhost:3000/authResult",
+            grant_type : "authorization_code"
+        }
+    }
+
+    request(option, function(err, response, body){
+        if(err){
+            console.error(err);
+            throw err;
+        }
+        else {
+            var accessRequestResult = JSON.parse(body);
+            console.log(accessRequestResult);
+            res.render('resultChild', {data : accessRequestResult});
+        }
+    })
 })
 
 var mysql = require('mysql');
