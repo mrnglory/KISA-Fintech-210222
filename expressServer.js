@@ -22,6 +22,10 @@ app.get('/ejs', function (req, res) {
     res.render('ejsTest');
 })
 
+app.get('/designTest', function(req, res) {
+    res.render("designSample");
+})
+
 app.post('/userData', function(req, res) {
     console.log("사용자의 요청이 발생했습니다");
     console.log(req.body);
