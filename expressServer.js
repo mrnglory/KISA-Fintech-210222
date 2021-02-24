@@ -62,9 +62,9 @@ app.post('/signup', function(req, res) {
     var userSeqNo = req.body.userSeqNo;
 
     console.log(userName, userEmail, userPassword, userAccessToken);
-    var sql = "INSERT INTO user (name, email, password, accesstoken, refreshtoken, userseqno) VALUES (?, ?, ?, ?, ?, ?)";
-    connection.query(sql, [userName, userEmail, userPassword, userAccessToken, userRefreshToken, userSeqNo], function(error, results, fields) {
-        if (err) {
+    var sql = "INSERT INTO user (name, email, password, accesstoken, refreshtoken, userseqno) VALUES (?,?,?,?,?,?)";
+    connection.query(sql,[userName, userEmail, userPassword, userAccessToken, userRefreshToken, userSeqNo], function (err, result) {
+        if(err){
             console.error(err);
             throw err;
         }
@@ -72,6 +72,7 @@ app.post('/signup', function(req, res) {
             res.json(1);
         }
     });
+
 })
 
 var mysql = require('mysql');
