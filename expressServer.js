@@ -1,10 +1,13 @@
 const express = require('express');
 const app = express();
+const path = require('path');
 
 // json 타입의 데이터 전송을 허용
 app.use(express.json());
 // form 타입의 데이터 전송을 허용
 app.use(express.urlencoded({ extended: false }));
+// to use static asset
+app.use(express.static(path.join(__dirname, 'public')));
 
 // 뷰 파일이 있는 디렉토리를 설정
 app.set('views', __dirname + '/views');
