@@ -4,7 +4,7 @@ const path = require('path');
 const request = require('request');
 var jwt = require('jsonwebtoken');
 var auth = require('./lib/auth');
-
+var moment = require('moment')
 // json 타입의 데이터 전송을 허용
 app.use(express.json());
 // form 타입의 데이터 전송을 허용
@@ -16,6 +16,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', __dirname + '/views');
 // 뷰 엔진으로 ejs 사용
 app.set('view engine', 'ejs');
+
+var companyId = "M202111576U";
 
 app.get('/', function (req, res) {
     res.send('Hello World');
@@ -31,6 +33,10 @@ app.get('/login', function(req, res) {
 
 app.get('/main', function(req, res) {
     res.render('main');
+})
+
+app.get('/balance', function(req, res) {
+    res.render('balance');
 })
 
 app.get('/authTest', auth, function(req, res) {
@@ -163,6 +169,48 @@ app.post('/list', auth, function(req, res) {
                     var listRequestResult = JSON.parse(body);
                     // console.log(listRequestResult);
                     res.json(listRequestResult);
+                }
+            })
+        }
+    })
+})
+
+app.post('/balance', auth, function(req, res) {
+    // 사용자 정보 조회
+    // 사용자 정보를 바탕으로 request(잔액조회 api) 요청 작성하기
+    var user = req.decoded;
+    console.log(req.body)
+    var finusernum = req.body.fin_use_num;
+    var countnum = Math.floor(Math.random() * 1000000000) + 1;
+    var transId = "M202111576U" + countnum;
+    var transdtime = moment(new Date()).format('YYYYMMDDhhmmss');
+    console.log(transdtime);
+    var sql = "SELECT * FROM user WHERE id = ?";
+    connection.query(sql, [user.userId], function(err, result) {
+        if (err) throw err;
+        else {
+            var dbUserData = result[0];
+            console.log(dbUserData);
+            var option = {
+                method : "GET",
+                url : "https://testapi.openbanking.or.kr/v2.0/account/balance/fin_num",
+                headers : {
+                    Authorization : "Bearer " + dbUserData.accesstoken
+                },
+                qs : {
+                    bank_tran_id : transId,
+                    fintech_use_num : finusernum,
+                    tran_dtime : transdtime
+                }
+            }
+            request(option, function(err, response, body) {
+                if (err) {
+                    console.error(err);
+                    throw err;
+                }
+                else {
+                    var balanceRequestResult = JSON.parse(body);
+                    res.json(balanceRequestResult);
                 }
             })
         }
