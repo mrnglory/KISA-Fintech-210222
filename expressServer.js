@@ -39,6 +39,10 @@ app.get('/balance', function(req, res) {
     res.render('balance');
 })
 
+app.get('/qrcode', function(req, res) {
+    res.render('qrcode');
+})
+
 app.get('/authTest', auth, function(req, res) {
     res.send("정상적으로 로그인 하셨다면 해당 화면이 보입니다.");
 })
@@ -180,7 +184,7 @@ app.post('/balance', auth, function(req, res) {
     // 사용자 정보를 바탕으로 request(잔액조회 api) 요청 작성하기
     var user = req.decoded;
     console.log(req.body)
-    var finusernum = req.body.fin_use_num;
+    var finusenum = req.body.fin_use_num;
     var countnum = Math.floor(Math.random() * 1000000000) + 1;
     var transId = "M202111576U" + countnum;
     var transdtime = moment(new Date()).format('YYYYMMDDhhmmss');
@@ -199,7 +203,7 @@ app.post('/balance', auth, function(req, res) {
                 },
                 qs : {
                     bank_tran_id : transId,
-                    fintech_use_num : finusernum,
+                    fintech_use_num : finusenum,
                     tran_dtime : transdtime
                 }
             }
@@ -215,6 +219,55 @@ app.post('/balance', auth, function(req, res) {
             })
         }
     })
+})
+
+app.post('/transactionList', auth, function(req, res) {
+    var user = req.decoded;
+    console.log(req.body)
+    var finusenum = req.body.fin_use_num;
+    var countnum = Math.floor(Math.random() * 1000000000) + 1;
+    var transId = companyId + countnum;
+    var transdtime = moment(new Date()).format('YYYYMMDDhhmmss');
+    console.log(transdtime);
+    var sql = "SELECT * FROM user WHERE id = ?";
+    connection.query(sql, [user.userId], function(err, result){
+        if (err) throw err;
+        else {
+            var dbUserData = result[0];
+            console.log(dbUserData);
+            var option = {
+                method : "GET",
+                url : "https://testapi.openbanking.or.kr/v2.0/account/transaction_list/fin_num",
+                headers : {
+                    Authorization : "Bearer " + dbUserData.accesstoken
+                },
+                qs : {
+                    bank_tran_id : transId,
+                    fintech_use_num : finusenum,
+                    inquiry_type : 'A',
+                    inquiry_base : 'D',
+                    from_date : '20190101',
+                    to_date : '20190101',
+                    sort_order : 'D',
+                    tran_dtime : transdtime
+                }
+            }
+            request (option, function(err, response, body) {
+                if (err) {
+                    console.error(err);
+                    throw err;
+                }
+                else {
+                    var transactionListResult = JSON.parse(body);
+                    res.json(transactionListResult);
+                }
+            })
+        }
+    })
+})
+
+app.post('/withdraw', auth, function(req, res) {
+
 })
 
 var mysql = require('mysql');
