@@ -135,6 +135,40 @@ app.post('/login', function(req, res){
 
 })
 
+app.post('/list', auth, function(req, res) {
+    var user = req.decoded;
+    console.log(user);
+    var sql = "SELECT * FROM user WHERE id = ?";
+    connection.query(sql, [user.userId], function(err, result) {
+        if (err) throw err;
+        else {
+            var dbUserData = result[0];
+            console.log(dbUserData);
+            var option = {
+                method : "GET",
+                url : "https://testapi.openbanking.or.kr/v2.0/user/me",
+                headers : {
+                    Authorization : "Bearer " + dbUserData.accesstoken
+                },
+                qs : {
+                    user_seq_no : dbUserData.userseqno
+                }
+            }
+            request(option, function(err, response, body) {
+                if (err) {
+                    console.error(err);
+                    throw err;
+                }
+                else {
+                    var listRequestResult = JSON.parse(body);
+                    // console.log(listRequestResult);
+                    res.json(listRequestResult);
+                }
+            })
+        }
+    })
+})
+
 var mysql = require('mysql');
 var connection = mysql.createConnection({
     host     : 'localhost',
