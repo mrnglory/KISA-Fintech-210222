@@ -29,6 +29,10 @@ app.get('/login', function(req, res) {
     res.render('login');
 })
 
+app.get('/main', function(req, res) {
+    res.render('main');
+})
+
 app.get('/authTest', auth, function(req, res) {
     res.send("정상적으로 로그인 하셨다면 해당 화면이 보입니다.");
 })
