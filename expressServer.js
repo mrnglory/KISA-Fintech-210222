@@ -259,7 +259,9 @@ app.post('/transactionList', auth, function(req, res) {
                 }
                 else {
                     var transactionListResult = JSON.parse(body);
+                    // console.log(transactionListResult);
                     res.json(transactionListResult);
+
                 }
             })
         }
