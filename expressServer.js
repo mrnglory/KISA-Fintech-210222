@@ -136,7 +136,6 @@ app.post('/login', function(req, res){
                     )
                 }
                 else {
-
                     res.json(2);
                 }
             }
@@ -269,7 +268,8 @@ app.post('/transactionList', auth, function(req, res) {
 })
 
 app.post('/withdraw', auth, function(req, res) {
-
+    // 사용자 출금이체 API 수정하기
+    console.log(req.body);
 })
 
 var mysql = require('mysql');
