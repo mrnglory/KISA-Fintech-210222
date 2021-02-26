@@ -43,6 +43,10 @@ app.get('/qrcode', function(req, res) {
     res.render('qrcode');
 })
 
+app.get('/qrreader', function(req, res){
+    res.render('qrreader');
+})
+
 app.get('/authTest', auth, function(req, res) {
     res.send("정상적으로 로그인 하셨다면 해당 화면이 보입니다.");
 })
@@ -270,6 +274,12 @@ app.post('/transactionList', auth, function(req, res) {
 app.post('/withdraw', auth, function(req, res) {
     // 사용자 출금이체 API 수정하기
     console.log(req.body);
+    var user = req.decoded;
+    var sql = "SELECT * FROM user WHERE id = ?";
+    var countnum = Math.floor(Math.random() * 1000000000) + 1;
+    var transId = companyId + countnum;
+    var transdtime = moment(new Date()).format('YYYYMMDDhhmmss');
+
     connection.query(sql, [user.userId], function(err, result) {
         if (err) throw err;
         else {
@@ -282,16 +292,16 @@ app.post('/withdraw', auth, function(req, res) {
                     Authorization : "Bearer" + dbUserData.accesstoken
                 },
                 json : {
-                    "bank_tran_id" : "M202111576U000000003",
+                    "bank_tran_id" : transId,
                     "cntr_account_type" : "N",
                     "cntr_account_num" : "100000000001",
                     "dps_print_content": "쇼핑몰환불",
-                    "fintech_use_num": "120211157688932123197454",
+                    "fintech_use_num": req.body.fin_use_num,
                     "wd_print_content": "오픈뱅킹출금",
-                    "tran_amt": "1000",
-                    "tran_dtime": "20201120105100",
+                    "tran_amt": req.body.amount,
+                    "tran_dtime": transdtime,
                     "req_client_name": "홍길동",
-                    "req_client_fintech_use_num" : "120211157688932123197454",
+                    "req_client_fintech_use_num" : req.body.fin_use_num,
                     "req_client_num": "HONGGILDONG1234",
                     "transfer_purpose": "ST",
                     "recv_client_name": "박조은",
